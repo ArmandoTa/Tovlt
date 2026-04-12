@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolVault — Free Online Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --border: #22222e;
+    --accent: #c8f04e;
+    --accent2: #4ef0c8;
+    --accent3: #f04e8a;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --card: #16161f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(200,240,78,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(78,240,200,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.9);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  nav button:hover, nav button.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .tool-section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tool-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .tool-desc {
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card:hover {
+    border-color: #2e2e3e;
+  }
+
+  label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  input, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+
+  select option { background: var(--surface); }
+
+  .btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+  }
+
+  .btn:hover { background: #d9ff5a; transform: translateY(-1px); }
+  .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn.secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+
+  .result-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .result-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .result-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(200,240,78,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(200,240,78,0.2);
+    border-radius: 4px;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* Password strength bar */
+  .strength-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    margin-top: 0.8rem;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s, background 0.3s;
+  }
+
+  /* BMI scale */
+  .bmi-scale {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1rem;
+    height: 8px;
+  }
+
+  .bmi-scale div { flex: 1; }
+
+  .toggle-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .toggle-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--text);
+  }
+
+  .toggle-row input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--accent);
+  }
+
+  /* Copy button */
+  .copy-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 1rem;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Age output grid */
+  .age-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .age-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .age-card .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .age-card .unit {
+    font-size: 0.68rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* Finance chart */
+  .chart-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.72rem;
+  }
+  .chart-row-label { width: 80px; color: var(--muted); text-align: right; flex-shrink: 0; }
+  .chart-bar-bg {
+    flex: 1;
+    background: var(--border);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .chart-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .chart-row-val { width: 90px; text-align: right; flex-shrink: 0; }
+
+  .finance-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+  .finance-tab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .finance-tab.active, .finance-tab:hover {
+    background: rgba(200,240,78,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .finance-panel { display: none; }
+  .finance-panel.active { display: block; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .summary-card .s-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .summary-card .s-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ToolVault</div>
+  <div class="tagline">Free Online Tools — Always Available</div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="show('unit')">Unit Converter</button>
+  <button onclick="show('bmi')">BMI Calculator</button>
+  <button onclick="show('password')">Password Gen</button>
+  <button onclick="show('currency')">Currency</button>
+  <button onclick="show('age')">Age Calculator</button>
+  <button onclick="show('finance')">Finance Calc</button>
+</nav>
+
+<main>
+
+  <!-- UNIT CONVERTER -->
+  <section id="unit" class="tool-section active">
+    <div class="tag">Converter</div>
+    <div class="tool-title">Unit Converter</div>
+    <div class="tool-desc">Convert between the most common units instantly</div>
+
+    <div class="card">
+      <label>Category</label>
+      <select id="unitCategory" onchange="updateUnitOptions()">
+        <option value="length">Length</option>
+        <option value="weight">Weight / Mass</option>
+        <option value="temp">Temperature</option>
+        <option value="speed">Speed</option>
+        <option value="area">Area</option>
+        <option value="volume">Volume</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label>Value</label>
+          <input type="number" id="unitValue" placeholder="Enter value" oninput="convertUnit()">
+        </div>
+        <div>
+          <label>From</label>
+          <select id="unitFrom" onchange="convertUnit()"></select>
+        </div>
+      </div>
+      <hr class="divider">
+      <div>
+        <label>To</label>
+        <select id="unitTo" onchange="convertUnit()"></select>
+      </div>
+
+      <div class="result-box" id="unitResult" style="display:none">
+        <div class="result-label">Result</div>
+        <div class="result-big" id="unitResultVal">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BMI CALCULATOR -->
+  <section id="bmi" class="tool-section">
+    <div class="tag">Health</div>
+    <div class="tool-title">BMI Calculator</div>
+    <div class="tool-desc">Body Mass Index — a quick indicator of healthy weight range</div>
+
+    <div class="card">
+      <div class="grid-2" style="margin-bottom:1rem">
+        <div>
+          <label>Height</label>
+          <input type="number" id="bmiHeight" placeholder="cm" oninput="calcBMI()">
+        </div>
+        <div>
+          <label>Weight</label>
+          <input type="number" id="bmiWeight" placeholder="kg" oninput="calcBMI()">
+        </div>
+      </div>
+
+      <div class="result-box" id="bmiResult" style="display:none">
+        <div class="result-label">Your BMI</div>
+        <div class="result-big" id="bmiVal">—</div>
+        <div id="bmiCategory" style="margin-top:0.5rem;font-size:0.85rem"></div>
+        <div class="bmi-scale" style="margin-top:1rem">
+          <div style="background:#4ef0c8"></div>
+          <div style="background:#c8f04e"></div>
+          <div style="background:#f0c84e"></div>
+          <div style="background:#f04e8a"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--muted);margin-top:0.3rem">
+          <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASSWORD GENERATOR -->
+  <section id="password" class="tool-section">
+    <div class="tag">Security</div>
+    <div class="tool-title">Password Generator</div>
+    <div class="tool-desc">Generate strong, random passwords instantly</div>
+
+    <div class="card">
+      <label>Length: <span id="pwLenLabel">16</span> characters</label>
+      <input type="range" id="pwLen" min="6" max="64" value="16" oninput="document.getElementById('pwLenLabel').textContent=this.value; generatePassword()">
+
+      <hr class="divider">
+
+      <div class="toggle-row">
+        <label><input type="checkbox" id="pwUpper" checked onchange="generatePassword()"> Uppercase (A-Z)</label>
+        <label><input type="checkbox" id="pwLower" checked onchange="generatePassword()"> Lowercase (a-z)</label>
+        <label><input type="checkbox" id="pwNum" checked onchange="generatePassword()"> Numbers (0-9)</label>
+        <label><input type="checkbox" id="pwSym" onchange="generatePassword()"> Symbols (!@#)</label>
+      </div>
+
+      <div class="result-box" id="pwResult">
+        <div class="row-between">
+          <div>
+            <div class="result-label">Generated Password</div>
+            <div id="pwVal" style="font-size:1.1rem;word-break:break-all;margin-top:0.2rem">—</div>
+          </div>
+          <button class="copy-btn" onclick="copyPassword()">Copy</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="pwStrength"></div></div>
+        <div id="pwStrengthLabel" style="font-size:0.68rem;color:var(--muted);margin-top:0.4rem"></div>
+      </div>
+
+      <button class="btn" onclick="generatePassword()">↻ Regenerate</button>
+    </div>
+  </section>
+
+  <!-- CURRENCY CONVERTER -->
+  <section id="currency" class="tool-section">
+    <div class="tag">Finance</div>
+    <div class="tool-title">Currency Converter</div>
+    <div class="tool-desc">Live exchange rates via Open Exchange Rates API</div>
+
+    <div class="card">
+      <div class="grid-3" style="margin-bottom:1rem">
+        <div>
+          <label>Amount</label>
+          <input type="number" id="currAmount" placeholder="1" value="1" oninput="convertCurrency()">
+        </div>
+        <div>
+          <label>From</label>
+          <select id="currFrom" onchange="convertCurrency()">
+            <option value="USD">USD — US Dollar</option>
+            <option value="EUR">EUR — Euro</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="JPY">JPY — Japanese Yen</option>
+            <option value="CHF">CHF — Swiss Franc</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="CNY">CNY — Chinese Yuan</option>
+            <option value="INR">INR — Indian Rupee</option>
+            <option value="BRL">BRL — Brazilian Real</option>
+            <option value="MXN">MXN — Mexican Peso</option>
+            <option value="KRW">KRW — South Korean Won</option>
+            <option value="SGD">SGD — Singapore Dollar</option>
+            <option value="HKD">HKD — Hong Kong Dollar</option>
+            <option value="SEK">SEK — Swedish Krona</option>
+            <option value="NOK">NOK — Norwegian Krone</option>
+            <option value="DKK">DKK — Danish Krone</option>
+            <option value="PLN">PLN — Polish Zloty</option>
+            <option value="TRY">TRY — Turkish Lira</option>
+            <option value="RUB">RUB — Russian Ruble</option>
+            <option value="ZAR">ZAR — South African Rand</option>
+          </select>
+        </div>
+        <div>
+          <label>To</label>
+          <select id="currTo" onchange="convertCurrency()">
+            <option value="USD">USD — US Dollar</option>
+            <option value="EUR" selected>EUR — Euro</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="JPY">JPY — Japanese Yen</option>
+            <option value="CHF">CHF — Swiss Franc</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="CNY">CNY — Chinese Yuan</option>
+            <option value="INR">INR — Indian Rupee</option>
+            <option value="BRL">BRL — Brazilian Real</option>
+            <option value="MXN">MXN — Mexican Peso</option>
+            <option value="KRW">KRW — South Korean Won</option>
+            <option value="SGD">SGD — Singapore Dollar</option>
+            <option value="HKD">HKD — Hong Kong Dollar</option>
+            <option value="SEK">SEK — Swedish Krona</option>
+            <option value="NOK">NOK — Norwegian Krone</option>
+            <option value="DKK">DKK — Danish Krone</option>
+            <option value="PLN">PLN — Polish Zloty</option>
+            <option value="TRY">TRY — Turkish Lira</option>
+            <option value="RUB">RUB — Russian Ruble</option>
+            <option value="ZAR">ZAR — South African Rand</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="result-box" id="currResult">
+        <div class="result-label">Converted Amount</div>
+        <div class="result-big" id="currResultVal">—</div>
+        <div id="currRate" style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem"></div>
+        <div id="currNote" style="font-size:0.68rem;color:var(--muted);margin-top:0.5rem"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGE CALCULATOR -->
+  <section id="age" class="tool-section">
+    <div class="tag">Date & Time</div>
+    <div class="tool-title">Age Calculator</div>
+    <div class="tool-desc">Find out your exact age and how many days you've lived</div>
+
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label>Date of Birth</label>
+          <input type="date" id="birthDate" onchange="calcAge()">
+        </div>
+        <div>
+          <label>Calculate As Of</label>
+          <input type="date" id="toDate" onchange="calcAge()">
+        </div>
+      </div>
+
+      <div id="ageResult" style="display:none">
+        <div class="age-grid">
+          <div class="age-card"><div class="num" id="ageYears">—</div><div class="unit">Years</div></div>
+          <div class="age-card"><div class="num" id="ageMonths">—</div><div class="unit">Months</div></div>
+          <div class="age-card"><div class="num" id="ageDays">—</div><div class="unit">Days</div></div>
+          <div class="age-card"><div class="num" id="ageHours">—</div><div class="unit">Hours</div></div>
+          <div class="age-card"><div class="num" id="ageWeeks">—</div><div class="unit">Total Weeks</div></div>
+          <div class="age-card"><div class="num" id="ageTotalDays">—</div><div class="unit">Total Days</div></div>
+        </div>
+        <div id="ageNextBirthday" style="margin-top:1rem;font-size:0.8rem;color:var(--muted)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCE CALCULATOR -->
+  <section id="finance" class="tool-section">
+    <div class="tag">Finance</div>
+    <div class="tool-title">Financial Calculator</div>
+    <div class="tool-desc">Mortgage, compound interest & savings planner</div>
+
+    <div class="finance-tabs">
+      <button class="finance-tab active" onclick="showFinanceTab('mortgage', this)">Mortgage</button>
+      <button class="finance-tab" onclick="showFinanceTab('compound', this)">Compound Interest</button>
+      <button class="finance-tab" onclick="showFinanceTab('savings', this)">Savings Goal</button>
+    </div>
+
+    <!-- MORTGAGE -->
+    <div id="finance-mortgage" class="finance-panel active">
+      <div class="card">
+        <div class="grid-3">
+          <div>
+            <label>Loan Amount ($)</label>
+            <input type="number" id="mortAmount" placeholder="200000" value="200000" oninput="calcMortgage()">
+          </div>
+          <div>
+            <label>Annual Rate (%)</label>
+            <input type="number" id="mortRate" placeholder="6.5" value="6.5" step="0.1" oninput="calcMortgage()">
+          </div>
+          <div>
+            <label>Loan Term (years)</label>
+            <input type="number" id="mortYears" placeholder="30" value="30" oninput="calcMortgage()">
+          </div>
+        </div>
+
+        <div id="mortResult" style="display:none; margin-top:1.5rem;">
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="s-num" id="mortMonthly">—</div>
+              <div class="s-label">Monthly Payment</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="mortTotal">—</div>
+              <div class="s-label">Total Paid</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="mortInterest" style="color:var(--accent3)">—</div>
+              <div class="s-label">Total Interest</div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem">
+            <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem">Payment Breakdown</div>
+            <div class="chart-bar-wrap">
+              <div class="chart-row">
+                <div class="chart-row-label">Principal</div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" id="mortPrinBar" style="background:var(--accent)"></div></div>
+                <div class="chart-row-val" id="mortPrinVal">—</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-row-label">Interest</div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" id="mortIntBar" style="background:var(--accent3)"></div></div>
+                <div class="chart-row-val" id="mortIntVal">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPOUND INTEREST -->
+    <div id="finance-compound" class="finance-panel">
+      <div class="card">
+        <div class="grid-2">
+          <div>
+            <label>Initial Investment ($)</label>
+            <input type="number" id="compPrincipal" placeholder="10000" value="10000" oninput="calcCompound()">
+          </div>
+          <div>
+            <label>Annual Rate (%)</label>
+            <input type="number" id="compRate" placeholder="7" value="7" step="0.1" oninput="calcCompound()">
+          </div>
+          <div>
+            <label>Years</label>
+            <input type="number" id="compYears" placeholder="10" value="10" oninput="calcCompound()">
+          </div>
+          <div>
+            <label>Compound Frequency</label>
+            <select id="compFreq" onchange="calcCompound()">
+              <option value="1">Annually</option>
+              <option value="4">Quarterly</option>
+              <option value="12" selected>Monthly</option>
+              <option value="365">Daily</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="compResult" style="display:none; margin-top:1.5rem;">
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="s-num" id="compFinal">—</div>
+              <div class="s-label">Final Amount</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="compGain" style="color:var(--accent2)">—</div>
+              <div class="s-label">Interest Earned</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="compMult">—</div>
+              <div class="s-label">Growth Multiplier</div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem">
+            <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem">Growth Over Time</div>
+            <div class="chart-bar-wrap" id="compChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVINGS GOAL -->
+    <div id="finance-savings" class="finance-panel">
+      <div class="card">
+        <div class="grid-2">
+          <div>
+            <label>Savings Goal ($)</label>
+            <input type="number" id="savGoal" placeholder="50000" value="50000" oninput="calcSavings()">
+          </div>
+          <div>
+            <label>Current Savings ($)</label>
+            <input type="number" id="savCurrent" placeholder="5000" value="5000" oninput="calcSavings()">
+          </div>
+          <div>
+            <label>Annual Rate (%)</label>
+            <input type="number" id="savRate" placeholder="4" value="4" step="0.1" oninput="calcSavings()">
+          </div>
+          <div>
+            <label>Years to Goal</label>
+            <input type="number" id="savYears" placeholder="5" value="5" oninput="calcSavings()">
+          </div>
+        </div>
+
+        <div id="savResult" style="display:none; margin-top:1.5rem;">
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="s-num" id="savMonthly">—</div>
+              <div class="s-label">Monthly Deposit</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="savTotalDeposit">—</div>
+              <div class="s-label">Total Deposited</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-num" id="savInterestEarned" style="color:var(--accent2)">—</div>
+              <div class="s-label">Interest Earned</div>
+            </div>
+          </div>
+
+          <div style="margin-top:1rem">
+            <div class="chart-bar-wrap">
+              <div class="chart-row">
+                <div class="chart-row-label">Deposits</div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" id="savDepBar" style="background:var(--accent)"></div></div>
+                <div class="chart-row-val" id="savDepVal">—</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-row-label">Interest</div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" id="savIntBar" style="background:var(--accent2)"></div></div>
+                <div class="chart-row-val" id="savIntVal">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+// ─── NAV ───────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── UNIT CONVERTER ────────────────────────────────────
+const unitData = {
+  length: {
+    units: ['Meter','Kilometer','Centimeter','Millimeter','Mile','Yard','Foot','Inch','Nautical Mile'],
+    toBase: [1, 1000, 0.01, 0.001, 1609.344, 0.9144, 0.3048, 0.0254, 1852]
+  },
+  weight: {
+    units: ['Kilogram','Gram','Milligram','Pound','Ounce','Ton (metric)','Stone'],
+    toBase: [1, 0.001, 0.000001, 0.453592, 0.0283495, 1000, 6.35029]
+  },
+  temp: {
+    units: ['Celsius','Fahrenheit','Kelvin'],
+    toBase: null // special
+  },
+  speed: {
+    units: ['m/s','km/h','mph','knots','ft/s'],
+    toBase: [1, 0.277778, 0.44704, 0.514444, 0.3048]
+  },
+  area: {
+    units: ['m²','km²','cm²','Hectare','Acre','ft²','in²','mi²'],
+    toBase: [1, 1e6, 0.0001, 10000, 4046.86, 0.092903, 0.00064516, 2589988]
+  },
+  volume: {
+    units: ['Liter','Milliliter','Gallon (US)','Quart (US)','Pint (US)','Cup (US)','fl oz (US)','m³','cm³'],
+    toBase: [1, 0.001, 3.78541, 0.946353, 0.473176, 0.236588, 0.0295735, 1000, 0.001]
+  }
+};
+
+function updateUnitOptions() {
+  const cat = document.getElementById('unitCategory').value;
+  const data = unitData[cat];
+  ['unitFrom','unitTo'].forEach((id,i) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = data.units.map((u,idx) => `<option value="${idx}">${u}</option>`).join('');
+    if (i === 1 && data.units.length > 1) sel.selectedIndex = 1;
+  });
+  convertUnit();
+}
+
+function convertUnit() {
+  const cat = document.getElementById('unitCategory').value;
+  const val = parseFloat(document.getElementById('unitValue').value);
+  const from = parseInt(document.getElementById('unitFrom').value);
+  const to = parseInt(document.getElementById('unitTo').value);
+  const data = unitData[cat];
+
+  if (isNaN(val)) { document.getElementById('unitResult').style.display='none'; return; }
+
+  let result;
+  if (cat === 'temp') {
+    // convert from→Celsius→to
+    let celsius;
+    if (from === 0) celsius = val;
+    else if (from === 1) celsius = (val - 32) * 5/9;
+    else celsius = val - 273.15;
+    if (to === 0) result = celsius;
+    else if (to === 1) result = celsius * 9/5 + 32;
+    else result = celsius + 273.15;
+  } else {
+    result = val * data.toBase[from] / data.toBase[to];
+  }
+
+  const fmt = Math.abs(result) < 0.01 && result !== 0 ? result.toExponential(4) : +result.toPrecision(8);
+  document.getElementById('unitResult').style.display = 'block';
+  document.getElementById('unitResultVal').textContent = `${fmt} ${data.units[to]}`;
+}
+
+updateUnitOptions();
+
+// ─── BMI ───────────────────────────────────────────────
+function calcBMI() {
+  const h = parseFloat(document.getElementById('bmiHeight').value) / 100;
+  const w = parseFloat(document.getElementById('bmiWeight').value);
+  if (!h || !w || h <= 0 || w <= 0) { document.getElementById('bmiResult').style.display='none'; return; }
+  const bmi = w / (h * h);
+  let cat, color;
+  if (bmi < 18.5) { cat='Underweight'; color='var(--accent2)'; }
+  else if (bmi < 25) { cat='Normal weight'; color='var(--accent)'; }
+  else if (bmi < 30) { cat='Overweight'; color='#f0c84e'; }
+  else { cat='Obese'; color='var(--accent3)'; }
+  document.getElementById('bmiResult').style.display='block';
+  document.getElementById('bmiVal').textContent = bmi.toFixed(1);
+  document.getElementById('bmiVal').style.color = color;
+  document.getElementById('bmiCategory').textContent = cat;
+  document.getElementById('bmiCategory').style.color = color;
+}
+
+// ─── PASSWORD ──────────────────────────────────────────
+function generatePassword() {
+  const len = parseInt(document.getElementById('pwLen').value);
+  const upper = document.getElementById('pwUpper').checked;
+  const lower = document.getElementById('pwLower').checked;
+  const num = document.getElementById('pwNum').checked;
+  const sym = document.getElementById('pwSym').checked;
+  let chars = '';
+  if (upper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (lower) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (num) chars += '0123456789';
+  if (sym) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+  if (!chars) { document.getElementById('pwVal').textContent = 'Select at least one option'; return; }
+  let pw = '';
+  for (let i = 0; i < len; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('pwVal').textContent = pw;
+  // Strength
+  let score = 0;
+  if (upper) score++; if (lower) score++; if (num) score++; if (sym) score++;
+  if (len >= 12) score++; if (len >= 20) score++;
+  const pct = Math.min(100, Math.round(score / 6 * 100));
+  const colors = ['#f04e8a','#f0c84e','#c8f04e','#4ef0c8'];
+  const labels = ['Weak','Fair','Good','Strong'];
+  const idx = score <= 2 ? 0 : score <= 3 ? 1 : score <= 4 ? 2 : 3;
+  document.getElementById('pwStrength').style.width = pct + '%';
+  document.getElementById('pwStrength').style.background = colors[idx];
+  document.getElementById('pwStrengthLabel').textContent = 'Strength: ' + labels[idx];
+}
+
+function copyPassword() {
+  const pw = document.getElementById('pwVal').textContent;
+  navigator.clipboard.writeText(pw).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+generatePassword();
+
+// ─── CURRENCY ──────────────────────────────────────────
+// Static approximate rates (USD base) — replace with live API for production
+const rates = {
+  USD:1, EUR:0.922, GBP:0.789, JPY:151.2, CHF:0.905,
+  CAD:1.362, AUD:1.534, CNY:7.238, INR:83.4, BRL:4.97,
+  MXN:17.15, KRW:1325, SGD:1.345, HKD:7.82, SEK:10.45,
+  NOK:10.52, DKK:6.88, PLN:3.97, TRY:32.1, RUB:90.5, ZAR:18.7
+};
+
+function convertCurrency() {
+  const amount = parseFloat(document.getElementById('currAmount').value) || 1;
+  const from = document.getElementById('currFrom').value;
+  const to = document.getElementById('currTo').value;
+  const usdAmount = amount / rates[from];
+  const result = usdAmount * rates[to];
+  const rate = rates[to] / rates[from];
+  document.getElementById('currResultVal').textContent =
+    `${result.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:4})} ${to}`;
+  document.getElementById('currRate').textContent =
+    `1 ${from} = ${rate.toFixed(4)} ${to}`;
+  document.getElementById('currNote').textContent =
+    '⚠ Rates are indicative. For live rates, connect to a currency API.';
+}
+
+convertCurrency();
+
+// ─── AGE CALCULATOR ────────────────────────────────────
+// Set today as default for toDate
+document.getElementById('toDate').value = new Date().toISOString().split('T')[0];
+
+function calcAge() {
+  const birth = new Date(document.getElementById('birthDate').value);
+  const to = new Date(document.getElementById('toDate').value);
+  if (!document.getElementById('birthDate').value || birth >= to) {
+    document.getElementById('ageResult').style.display='none'; return;
+  }
+
+  const totalMs = to - birth;
+  const totalDays = Math.floor(totalMs / 86400000);
+  const totalWeeks = Math.floor(totalDays / 7);
+  const totalHours = Math.floor(totalMs / 3600000);
+
+  let y = to.getFullYear() - birth.getFullYear();
+  let m = to.getMonth() - birth.getMonth();
+  let d = to.getDate() - birth.getDate();
+  if (d < 0) { m--; d += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
+  if (m < 0) { y--; m += 12; }
+
+  document.getElementById('ageYears').textContent = y;
+  document.getElementById('ageMonths').textContent = m;
+  document.getElementById('ageDays').textContent = d;
+  document.getElementById('ageHours').textContent = totalHours.toLocaleString();
+  document.getElementById('ageWeeks').textContent = totalWeeks.toLocaleString();
+  document.getElementById('ageTotalDays').textContent = totalDays.toLocaleString();
+
+  // Next birthday
+  let next = new Date(to.getFullYear(), birth.getMonth(), birth.getDate());
+  if (next <= to) next.setFullYear(next.getFullYear() + 1);
+  const daysLeft = Math.ceil((next - to) / 86400000);
+  document.getElementById('ageNextBirthday').textContent =
+    `🎂 Next birthday in ${daysLeft} day${daysLeft !== 1 ? 's' : ''} (${next.toDateString()})`;
+
+  document.getElementById('ageResult').style.display = 'block';
+}
+// ─── FINANCE ───────────────────────────────────────────
+function showFinanceTab(id, btn) {
+  document.querySelectorAll('.finance-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.finance-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('finance-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function fmt$(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calcMortgage() {
+  const P = parseFloat(document.getElementById('mortAmount').value);
+  const r = parseFloat(document.getElementById('mortRate').value) / 100 / 12;
+  const n = parseFloat(document.getElementById('mortYears').value) * 12;
+  if (!P || !r || !n) { document.getElementById('mortResult').style.display='none'; return; }
+  const monthly = P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const total = monthly * n;
+  const interest = total - P;
+  const prinPct = (P / total * 100).toFixed(1);
+  const intPct = (interest / total * 100).toFixed(1);
+  document.getElementById('mortResult').style.display = 'block';
+  document.getElementById('mortMonthly').textContent = fmt$(monthly);
+  document.getElementById('mortTotal').textContent = fmt$(total);
+  document.getElementById('mortInterest').textContent = fmt$(interest);
+  document.getElementById('mortPrinBar').style.width = prinPct + '%';
+  document.getElementById('mortIntBar').style.width = intPct + '%';
+  document.getElementById('mortPrinVal').textContent = prinPct + '%';
+  document.getElementById('mortIntVal').textContent = intPct + '%';
+}
+
+function calcCompound() {
+  const P = parseFloat(document.getElementById('compPrincipal').value);
+  const r = parseFloat(document.getElementById('compRate').value) / 100;
+  const t = parseFloat(document.getElementById('compYears').value);
+  const n = parseInt(document.getElementById('compFreq').value);
+  if (!P || !r || !t) { document.getElementById('compResult').style.display='none'; return; }
+  const final = P * Math.pow(1 + r/n, n*t);
+  const gain = final - P;
+  const mult = (final / P).toFixed(2);
+  document.getElementById('compResult').style.display = 'block';
+  document.getElementById('compFinal').textContent = fmt$(final);
+  document.getElementById('compGain').textContent = fmt$(gain);
+  document.getElementById('compMult').textContent = mult + 'x';
+  // Chart: show every ~2 years
+  const chart = document.getElementById('compChart');
+  chart.innerHTML = '';
+  const steps = Math.min(t, 10);
+  const maxVal = final;
+  for (let i = 1; i <= steps; i++) {
+    const yr = Math.round(t * i / steps);
+    const val = P * Math.pow(1 + r/n, n*yr);
+    const pct = (val / maxVal * 100).toFixed(1);
+    chart.innerHTML += `
+      <div class="chart-row">
+        <div class="chart-row-label">Yr ${yr}</div>
+        <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%;background:var(--accent2)"></div></div>
+        <div class="chart-row-val">${fmt$(val)}</div>
+      </div>`;
+  }
+}
+
+function calcSavings() {
+  const goal = parseFloat(document.getElementById('savGoal').value);
+  const current = parseFloat(document.getElementById('savCurrent').value) || 0;
+  const r = parseFloat(document.getElementById('savRate').value) / 100 / 12;
+  const n = parseFloat(document.getElementById('savYears').value) * 12;
+  if (!goal || !n) { document.getElementById('savResult').style.display='none'; return; }
+  // FV of current savings
+  const fvCurrent = current * Math.pow(1+r, n);
+  const remaining = goal - fvCurrent;
+  // Monthly payment needed
+  const monthly = r > 0 ? remaining * r / (Math.pow(1+r,n)-1) : remaining / n;
+  const totalDeposit = monthly * n + current;
+  const interestEarned = goal - totalDeposit;
+  const depPct = Math.min(100, (totalDeposit / goal * 100)).toFixed(1);
+  const intPct = Math.max(0, (interestEarned / goal * 100)).toFixed(1);
+  document.getElementById('savResult').style.display = 'block';
+  document.getElementById('savMonthly').textContent = monthly > 0 ? fmt$(monthly) : '$0';
+  document.getElementById('savTotalDeposit').textContent = fmt$(totalDeposit);
+  document.getElementById('savInterestEarned').textContent = fmt$(Math.max(0, interestEarned));
+  document.getElementById('savDepBar').style.width = depPct + '%';
+  document.getElementById('savIntBar').style.width = intPct + '%';
+  document.getElementById('savDepVal').textContent = depPct + '%';
+  document.getElementById('savIntVal').textContent = intPct + '%';
+}
+
+calcMortgage();
+calcCompound();
+calcSavings();
+</script>
+
+</body>
+</html>
